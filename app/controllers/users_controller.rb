@@ -1,28 +1,21 @@
 class UsersController < ApplicationController
-  require 'json_web_token'
-  def create
-    user = User.new(user_params)
-    if user.save
-      render json: {status: 'User created successfully'}, status: :created
-    else
-      render json: { errors: user.errors.full_messages }, status: :bad_request
-    end
-  end
-
-  def login
-    user = User.find_by(email: params[:email].to_s.downcase)
-    if user && user.authenticate(params[:password])
-      auth_token = JsonWebToken.encode({user_id: user.id})
-      render json: {jwt: auth_token}, status: :ok
-    else
-      render json: {error: 'Invalid username / password'}, status: :unauthorized
-    end
+   skip_before_action :authorize_request, only: :create
+  
+   def create
+    user = User.create!(user_params)
+    auth_token = AuthenticateUser.new(user.email, user.password).call
+    response = { message: Message.account_created, auth_token: auth_token }
+    json_response(response, :created)
   end
 
   private
 
   def user_params
-    params.require(:user).permit(:name, :email, :password)
+    params.permit(
+      :name,
+      :email,
+      :password,
+      :password_confirmation
+    )
   end
 end
-
