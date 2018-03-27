@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
  
+  apipie
  root 'todos#index'
  scope module: :v2, constraints: ApiVersion.new('v2') do
     resources :todos, only: :index
@@ -16,4 +17,5 @@ end
   end
    post '/signup', to: 'users#create'
    post 'auth/login', to: 'authentication#authenticate'
+   post 'auth/logout', to: 'authentication#logout'
 end

@@ -1,6 +1,13 @@
 class UsersController < ApplicationController
    skip_before_action :authorize_request, only: :create
-  
+
+   api :POST , '/users', 'Create user'
+   param :user, Hash, desc: "User info" do
+    param :name, String, desc: "Username for login", required: true
+    param :email, String, desc: "Email of User", required: true
+    param :password, String, desc: "Password for login", required: true
+    param :password_confirmation, String, desc: "Confirmation of password", required: true
+  end 
    def create
     user = User.create!(user_params)
     auth_token = AuthenticateUser.new(user.email, user.password).call
