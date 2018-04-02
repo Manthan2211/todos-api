@@ -4,8 +4,8 @@ module V1
     before_action :set_todo_item, only: [:show, :update, :destroy]
 
     def_param_group :ids do
-      param :todo_id, Integer, desc: "todo_id", required: true
-      param :id, Integer, desc: "item_id", required: true
+      param :todo_id, String, desc: "todo_id", required: true
+      param :id, String, desc: "item_id", required: true
     end
 
     def_param_group :item do 
@@ -14,7 +14,7 @@ module V1
     end
   
     api :GET,'/todos/:todo_id/items',"list of all items For given todo_id"
-    param :todo_id, Integer, desc: "todo_id", required: true
+    param :todo_id, String, desc: "todo_id", required: true
     def index
       json_response(@todo.items)
     end
@@ -26,7 +26,7 @@ module V1
     end
 
     api :POST,'/todos/:todo_id/items',"Create Item"
-    param :todo_id, Integer, desc: "todo_id", required: true
+    param :todo_id, String, desc: "todo_id", required: true
     param_group :item
     def create
       @todo.items.create!(item_params)
